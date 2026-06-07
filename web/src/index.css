@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+:root {
+    --primary: #3b82f6;
+    --secondary: #ef4444;
+    --tertiary: #facc15;
+    --neutral: #757780;
+}
+
+@theme {
+    --color-primary: var(--primary);
+    --color-secondary: var(--secondary);
+    --color-tertiary: var(--tertiary);
+    --color-neutral: var(--neutral);
+}
+
+@layer base {
+    .root {
+        isolation: isolate;
+    }
+
+    body {
+        @apply bg-neutral-100 text-neutral-900;
+        position: relative;
+    }
+}
