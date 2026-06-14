@@ -17,7 +17,7 @@ const Paddle = ({ x = 0, y = 0, player = 'left', width, height }: PaddleProps) =
             g.rect(0, -height / 2, width, height);
 
             g.fill({
-                color: player === 'left' ? 0xff0000 : 0x0000ff,
+                color: 'black',
             });
         },
         [width, height, player],

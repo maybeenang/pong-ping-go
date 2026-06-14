@@ -1,12 +1,13 @@
+import { GAME } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 import { Application, extend, useApplication } from '@pixi/react';
 import { Graphics } from 'pixi.js';
 import { useRef } from 'react';
 import { useGameStore } from '../../stores/use-game-store';
-import { GAME } from '../../utils/constants';
-import { cn } from '../../utils/helper';
 import Ball from './ball';
 import CourtLine from './court-line';
 import Paddle from './paddle';
+import SideLine from './side-line';
 
 extend({
     Graphics,
@@ -29,6 +30,7 @@ const GameContent = () => {
 
     return (
         <>
+            <SideLine canvasWidth={width} canvasHeight={height} />
             <CourtLine canvasWidth={width} canvasHeight={height} />
             <Ball x={sx(gameState.ball_x)} y={sy(gameState.ball_y)} radius={ballRadius} />
             <Paddle
@@ -54,10 +56,12 @@ const Field = () => {
     const ref = useRef<HTMLDivElement>(null);
 
     return (
-        <div className={cn('h-full w-full bg-sky-200')} ref={ref}>
-            <Application resizeTo={ref} backgroundColor={0x87ceeb}>
-                <GameContent />
-            </Application>
+        <div className="min-h-0 w-full flex-1 p-4">
+            <div className={cn('h-full w-full')} ref={ref}>
+                <Application resizeTo={ref} backgroundColor={'white'}>
+                    <GameContent />
+                </Application>
+            </div>
         </div>
     );
 };

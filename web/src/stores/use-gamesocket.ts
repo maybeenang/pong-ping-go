@@ -1,7 +1,7 @@
+import { getWebsocketUrl } from '@/lib/constants';
 import { useCallback, useEffect } from 'react';
 import useWebSocketModule, { ReadyState } from 'react-use-websocket';
 import type { GameState } from '../types/game';
-import { getWebSocketUrl } from '../utils/constants';
 import { useGameStore, type ConnectionStatus } from './use-game-store';
 
 const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
@@ -20,7 +20,7 @@ export const useGameSocket = (roomId: string) => {
     const setGameState = useGameStore((state) => state.setGameState);
     const setConnectionStatus = useGameStore((state) => state.setConnectionStatus);
 
-    const { sendJsonMessage, readyState } = useWebSocket(getWebSocketUrl(roomId), {
+    const { sendJsonMessage, readyState } = useWebSocket(getWebsocketUrl(roomId), {
         onMessage: (event: MessageEvent) => {
             try {
                 const data: GameState = JSON.parse(event.data);

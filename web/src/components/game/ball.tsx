@@ -11,8 +11,8 @@ const Ball = ({ x, y, radius }: BallProps) => {
     const draw = useCallback(
         (g: Graphics) => {
             g.clear();
-            g.circle(0, 0, radius);
-            g.fill(0xffffff);
+            g.rect(-radius, -radius, radius * 2, radius * 2);
+            g.fill('black');
         },
         [radius],
     );

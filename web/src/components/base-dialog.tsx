@@ -1,5 +1,5 @@
 import type { ComponentProps, FC, ReactNode } from 'react';
-import { Dialog, DialogBody, DialogContent, DialogTrigger } from './ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 
 export type BaseDialogProps = ComponentProps<typeof Dialog> &
     Omit<ComponentProps<typeof DialogContent>, keyof ComponentProps<typeof Dialog>> & {
@@ -14,15 +14,14 @@ const BaseDialog: FC<BaseDialogProps> = ({
     defaultOpen,
     onOpenChange,
     className,
-    size,
     renderTrigger,
     ...props
 }) => {
     return (
         <Dialog open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             {renderTrigger ? <DialogTrigger>{renderTrigger}</DialogTrigger> : null}
-            <DialogContent {...props} className={className} size={size}>
-                <DialogBody>{children as ReactNode}</DialogBody>
+            <DialogContent {...props} className={className}>
+                {children}
             </DialogContent>
         </Dialog>
     );

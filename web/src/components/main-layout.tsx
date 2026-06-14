@@ -1,10 +1,12 @@
+import { cn } from '@/lib/utils';
 import { Outlet } from 'react-router';
-import { cn } from '../utils/helper';
 
 const MainLayout = () => {
     return (
-        <main className={cn('w-screen', 'h-screen', 'bg-zinc-50')}>
-            <Outlet />
+        <main className={cn('w-screen', 'h-screen', 'bg-background', 'p-4')}>
+            <div className="h-full w-full border border-primary">
+                <Outlet />
+            </div>
         </main>
     );
 };

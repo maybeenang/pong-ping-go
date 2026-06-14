@@ -1,9 +1,7 @@
+import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { createRoom } from '../actions/room-action';
-import BaseDialog from '../components/base-dialog';
-import MainMenuButton from '../components/main-menu-button';
-import Button from '../components/ui/button';
 
 const HomeScreen = () => {
     const navigate = useNavigate();
@@ -26,52 +24,35 @@ const HomeScreen = () => {
 
     const buttons = [
         {
-            label: 'Quick Play',
-            className: 'row-span-4',
+            label: 'Play',
             onClick: () => {
                 navigate('/play');
             },
+            variant: 'default' as 'outline' | 'default',
         },
         {
-            label: 'Create Room',
-            className: 'row-span-3',
-            onClick: () => {
-                setOpenCreate(true);
-            },
+            label: 'Profile',
         },
-        { label: 'Join Room', className: 'row-span-3', onClick: () => {} },
-        { label: 'Room List', className: 'row-span-2', onClick: () => {} },
+        {
+            label: 'Settings',
+        },
     ];
 
     return (
-        <div className="h-full p-8">
-            <div className="grid h-full grid-cols-2 grid-rows-6 gap-2 p-32">
+        <div className="h-full w-full flex-col items-center justify-center gap-8 p-4 md:flex">
+            <h1 className="text-center text-8xl font-bold">PING PONG</h1>
+            <div className="mx-auto flex w-full max-w-sm flex-col gap-4">
                 {buttons.map((button) => (
-                    <MainMenuButton
+                    <Button
                         key={button.label}
                         onClick={button.onClick}
-                        className={button.className}
+                        size={'xl'}
+                        variant={button.variant || 'outline'}
                     >
                         {button.label}
-                    </MainMenuButton>
+                    </Button>
                 ))}
             </div>
-            <BaseDialog size="sm" open={openCreate} onOpenChange={(open) => setOpenCreate(open)}>
-                <div className="flex h-full flex-col items-center justify-center gap-4">
-                    <h2 className="text-2xl font-bold">Create Room</h2>
-                    <form action={handleSubmitCreateRoom}>
-                        <input
-                            type="text"
-                            name="roomName"
-                            placeholder="Room Name"
-                            className="w-full rounded border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        />
-                        <Button type="submit" className="mt-4 w-full">
-                            Create
-                        </Button>
-                    </form>
-                </div>
-            </BaseDialog>
         </div>
     );
 };

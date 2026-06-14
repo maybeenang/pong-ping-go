@@ -1,23 +1,20 @@
 import type { Graphics } from 'pixi.js';
 import { useCallback } from 'react';
 
-type CourtLineProps = {
+type Props = {
     canvasWidth: number;
     canvasHeight: number;
 };
 
-const CourtLine = ({ canvasWidth, canvasHeight }: CourtLineProps) => {
+const SideLine = ({ canvasWidth, canvasHeight }: Props) => {
     const draw = useCallback(
         (g: Graphics) => {
             g.clear();
 
-            const centerX = canvasWidth / 2;
-            const dashHeight = 10;
-            const gapHeight = 8;
-
-            for (let y = 0; y < canvasHeight; y += dashHeight + gapHeight) {
-                g.rect(centerX - 1, y, 2, dashHeight);
-            }
+            g.rect(0, 0, 2, canvasHeight);
+            g.rect(canvasWidth - 2, 0, 2, canvasHeight);
+            g.rect(0, 0, canvasWidth, 2);
+            g.rect(0, canvasHeight - 2, canvasWidth, 2);
 
             g.fill({
                 color: 0x000000,
@@ -30,4 +27,4 @@ const CourtLine = ({ canvasWidth, canvasHeight }: CourtLineProps) => {
     return <pixiGraphics draw={draw} />;
 };
 
-export default CourtLine;
+export default SideLine;

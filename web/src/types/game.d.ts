@@ -11,6 +11,17 @@ export interface PlayerInput {
     direction: 'UP' | 'DOWN';
 }
 
+export interface Room {
+    room_id: string;
+    name: string;
+    players: number;
+    max_players: number;
+}
+
 export interface RoomResponse {
     room_id: string;
+}
+
+export interface ListRoomResponse {
+    rooms: Room[];
 }
