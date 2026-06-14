@@ -6,6 +6,7 @@ type LeaderboardEntry struct {
 	PlayerID string
 	Wins     int
 	Rank     int64
+	Username string
 }
 
 type LeaderboardRepository interface {

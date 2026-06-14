@@ -2,39 +2,48 @@
 package service
 
 import (
-	"math/rand"
+	"context"
+	"time"
 
-	"github.com/maybeenang/pong-ping-v2/internal/network"
+	"github.com/maybeenang/pong-ping-v2/internal/domain"
+	"github.com/maybeenang/pong-ping-v2/internal/repository"
 )
 
 type RoomService struct {
-	hub *network.Hub
+	repo repository.RoomRepository
 }
 
-func NewRoomService(hub *network.Hub) *RoomService {
-	return &RoomService{
-		hub: hub,
+func NewRoomService(repo repository.RoomRepository) *RoomService {
+	return &RoomService{repo: repo}
+}
+
+func (s *RoomService) CreateRoom(ctx context.Context, name string) (*domain.Room, error) {
+	room := &domain.Room{
+		ID:        generateID()[:8],
+		Name:      name,
+		Status:    domain.RoomStatusWaiting,
+		CreatedAt: time.Now(),
 	}
-}
 
-func generateRoomID(length int) string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	roomID := make([]byte, length)
-	for i := range roomID {
-		roomID[i] = charset[rand.Intn(len(charset))]
+	if err := s.repo.Create(ctx, room); err != nil {
+		return nil, err
 	}
-	return string(roomID)
+
+	return room, nil
 }
 
-func (s *RoomService) CreateRoom(name string) *network.Room {
-	roomID := generateRoomID(8)
-	return s.hub.CreteRoom(name, roomID)
+func (s *RoomService) GetRoomByID(ctx context.Context, id string) (*domain.Room, error) {
+	return s.repo.GetByID(ctx, id)
 }
 
-func (s *RoomService) GetRoomList() []string {
-	return s.hub.GetRoomList()
+func (s *RoomService) ListRooms(ctx context.Context) ([]*domain.Room, error) {
+	return s.repo.List(ctx)
 }
 
-func (s *RoomService) GetRoom(roomID string) *network.Room {
-	return s.hub.GetRoom(roomID)
+func (s *RoomService) UpdateRoomStatus(ctx context.Context, id string, status domain.RoomStatus) error {
+	return s.repo.UpdateStatus(ctx, id, status)
+}
+
+func (s *RoomService) DeleteRoom(ctx context.Context, id string) error {
+	return s.repo.Delete(ctx, id)
 }
