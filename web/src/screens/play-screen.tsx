@@ -2,16 +2,17 @@ import CreateRoomDialog from '@/components/dialogs/create-room-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
+import type { ListRoomsResponse, Room } from '@/types/api';
 import { SearchIcon } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useLoaderData, useNavigate } from 'react-router';
 
-const CardRoom = () => {
+const CardRoom = ({ room }: { room: Room }) => {
     const navigate = useNavigate();
     return (
         <Card size="default">
             <CardHeader>
-                <CardTitle>Room Name</CardTitle>
-                <CardAction>Code: abcde</CardAction>
+                <CardTitle>{room.name}</CardTitle>
+                <CardAction>Code: {room.id}</CardAction>
             </CardHeader>
             <CardContent className="flex flex-row items-center justify-between">
                 <p>Players: 1/2</p>
@@ -30,6 +31,8 @@ const CardRoom = () => {
 };
 
 const PlayScreen = () => {
+    const data = useLoaderData<ListRoomsResponse>();
+
     return (
         <section className="grid grid-cols-4 gap-4 p-4">
             <div className="col-span-1 space-y-4">
@@ -66,9 +69,8 @@ const PlayScreen = () => {
                     </div>
                     <CreateRoomDialog />
                 </div>
-                {Array.from({ length: 10 }).map((_, index) => (
-                    <CardRoom key={index} />
-                ))}
+                {data.status &&
+                    data.data.rooms.map((room) => <CardRoom key={room.id} room={room} />)}
             </div>
         </section>
     );

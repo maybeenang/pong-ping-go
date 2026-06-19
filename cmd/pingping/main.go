@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/maybeenang/pong-ping-v2/internal/config"
 	"github.com/maybeenang/pong-ping-v2/internal/handler"
+	"github.com/maybeenang/pong-ping-v2/internal/middleware"
 	"github.com/maybeenang/pong-ping-v2/internal/network"
 	"github.com/maybeenang/pong-ping-v2/internal/repository/memory"
 	"github.com/maybeenang/pong-ping-v2/internal/repository/postgres"
@@ -21,6 +23,9 @@ func main() {
 	ctx := context.Background()
 
 	cfg := config.Load()
+
+	jsonLogger := slog.NewJSONHandler(os.Stdout, nil)
+	logger := slog.New(jsonLogger)
 
 	// DB
 	pgPool, err := postgres.NewPool(ctx, cfg.DatabaseURL)
@@ -42,8 +47,6 @@ func main() {
 
 	// state
 	hub := network.NewHub()
-
-	// service
 
 	// handler
 	roomHandler := handler.NewRoomHandler(roomService, hub)
@@ -74,9 +77,15 @@ func main() {
 
 	mux.HandleFunc("/ws", wsHandler.ServeWS)
 
+	handler := middleware.Logger(logger)(mux)
+
 	server := &http.Server{
-		Addr:    ":" + cfg.Port,
-		Handler: mux,
+		Addr:              ":" + cfg.Port,
+		Handler:           handler,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       60 * time.Second,
 	}
 
 	go func() {
@@ -96,7 +105,7 @@ func main() {
 	defer cancel()
 
 	if err := server.Shutdown(shutdownCtx); err != nil {
-		log.Printf("server: shutdown error : %w", err)
+		log.Printf("server: shutdown error : %v", err)
 	}
 
 	pgPool.Close()

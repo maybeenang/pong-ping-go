@@ -1,10 +1,10 @@
-import type { RoomResponse } from '@/types/game';
+import type { GetRoomResponse, ListRoomsResponse } from '@/types/api';
 import axios from 'axios';
 
 export const getRoom = async (roomId: string) => {
     try {
-        const response = await axios.get<RoomResponse>(`/api/rooms/${roomId}`);
-        if (response.status === 200) {
+        const response = await axios.get<GetRoomResponse>(`/api/rooms/${roomId}`);
+        if (response.data.status) {
             return response.data;
         } else {
             throw new Error('Failed to get room');
@@ -17,8 +17,8 @@ export const getRoom = async (roomId: string) => {
 
 export const getRooms = async () => {
     try {
-        const response = await axios.get<RoomResponse[]>('/api/rooms');
-        if (response.status === 200) {
+        const response = await axios.get<ListRoomsResponse>('/api/rooms');
+        if (response.data.status) {
             return response.data;
         } else {
             throw new Error('Failed to get rooms');

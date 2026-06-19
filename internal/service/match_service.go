@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	"github.com/maybeenang/pong-ping-v2/internal/domain"
@@ -9,6 +10,7 @@ import (
 )
 
 type MatchService struct {
+	wg              sync.WaitGroup
 	matchRepo       repository.MatchRepository
 	leaderboardRepo repository.LeaderboardRepository
 }
@@ -49,8 +51,14 @@ func (s *MatchService) RecordMatchResult(
 		return nil, err
 	}
 
+	s.wg.Add(1)
+	asyncCtx := context.WithoutCancel(ctx)
+	asyncCtx, cancel := context.WithTimeout(asyncCtx, 5*time.Second)
+	defer cancel()
+
 	go func() {
-		s.leaderboardRepo.IncrementWin(ctx, winnerID)
+		defer s.wg.Done()
+		s.leaderboardRepo.IncrementWin(asyncCtx, winnerID)
 	}()
 
 	return match, nil

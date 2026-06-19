@@ -1,22 +1,23 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
-import { defineConfig, globalIgnores } from 'eslint/config'
-import prettier from 'eslint-config-prettier/flat';
+import js from '@eslint/js';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import unusedImports from 'eslint-plugin-unused-imports';
+import { defineConfig, globalIgnores } from 'eslint/config';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default defineConfig([
     globalIgnores(['dist']),
     {
-        plugins: [
-            "unused-imports"
-        ],
+        plugins: {
+            'unused-imports': unusedImports,
+        },
         files: ['**/*.{ts,tsx}'],
         rules: {
-            "no-unused-vars": "off",
-            "unused-imports/no-unused-imports": "error"
+            'no-unused-vars': 'off',
+            'no-console': 'warn',
+            'unused-imports/no-unused-imports': 'error',
         },
         extends: [
             js.configs.recommended,
@@ -28,5 +29,4 @@ export default defineConfig([
             globals: globals.browser,
         },
     },
-    prettier,
-])
+]);

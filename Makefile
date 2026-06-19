@@ -1,4 +1,4 @@
-.PHONY: dev-backend dev-frontend dev setup
+.PHONY: dev-backend dev-frontend dev setup migrate-up migrate-down migrate-drop migrate-version
 
 setup:
 	go mod tidy
@@ -12,3 +12,15 @@ dev-frontend:
 
 dev:
 	make -j 2 dev-backend dev-frontend
+
+migrate-up:
+	go run ./cmd/migrate up
+
+migrate-down:
+	go run ./cmd/migrate down
+
+migrate-drop:
+	go run ./cmd/migrate drop
+
+migrate-version:
+	go run ./cmd/migrate version

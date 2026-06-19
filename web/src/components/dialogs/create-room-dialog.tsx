@@ -9,24 +9,20 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { useActionState } from 'react';
-import { useNavigate } from 'react-router';
+import { useActionState, useState } from 'react';
 import { Field, FieldGroup } from '../ui/field';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
 const CreateRoomDialog = () => {
-    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
 
     const [error, submitAction, isLoading] = useActionState(
         async (prev: unknown, formData: FormData) => {
             try {
-                console.log('abcde');
                 const roomName = formData.get('name') as string;
-                const roomId = await createRoom(roomName);
-                if (roomId) {
-                    navigate(`/game/${roomId}`);
-                }
+                await createRoom(roomName);
+                setOpen(false);
             } catch (error) {
                 return {
                     error: 'Failed to create room. Please try again.',
@@ -37,7 +33,12 @@ const CreateRoomDialog = () => {
     );
 
     return (
-        <Dialog>
+        <Dialog
+            open={open}
+            onOpenChange={(isOpen) => {
+                setOpen(isOpen);
+            }}
+        >
             <DialogTrigger render={<Button>Create New Room</Button>} />
             <DialogContent className="sm:max-w-sm">
                 <form action={submitAction} className="space-y-4">

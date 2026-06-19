@@ -2,10 +2,12 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/maybeenang/pong-ping-v2/internal/network"
 	"github.com/maybeenang/pong-ping-v2/internal/service"
+	"github.com/maybeenang/pong-ping-v2/pkg/response"
 )
 
 type RoomHandler struct {
@@ -21,51 +23,37 @@ func NewRoomHandler(roomService *service.RoomService, hub *network.Hub) *RoomHan
 }
 
 func (h *RoomHandler) CreateRoom(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var req struct {
 		Name string `json:"name"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		response.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
 	room, err := h.roomService.CreateRoom(r.Context(), req.Name)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		response.Error(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	h.hub.CreteRoom(room.Name, room.ID)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{
-		"room_id":     room.ID,
-		"room_name":   room.Name,
-		"room_status": string(room.Status),
+	response.Success(w, http.StatusCreated, "Create room success", map[string]any{
+		"room": room,
 	})
+
 }
 
 func (h *RoomHandler) ListRoom(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	rooms, err := h.roomService.ListRooms(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		response.Error(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]any{
+	response.Success(w, http.StatusOK, "Get data success", map[string]any{
 		"rooms": rooms,
 	})
 }
@@ -74,23 +62,17 @@ func (h *RoomHandler) GetRoom(w http.ResponseWriter, r *http.Request) {
 	roomID := r.PathValue("id")
 
 	if roomID == "" {
-		http.Error(w, "id is required", http.StatusBadRequest)
+		response.Error(w, http.StatusBadRequest, errors.New("room ID is required"))
 		return
 	}
 
 	room, err := h.roomService.GetRoomByID(r.Context(), roomID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		response.Error(w, http.StatusNotFound, errors.New("room not found"))
 		return
 	}
 
-	if room == nil {
-		http.NotFound(w, r)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]any{
+	response.Success(w, http.StatusOK, "Get room by id success", map[string]any{
 		"room": room,
 	})
 }

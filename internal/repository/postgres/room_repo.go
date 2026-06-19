@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/maybeenang/pong-ping-v2/internal/domain"
@@ -85,6 +86,7 @@ func (r *RoomRepo) List(ctx context.Context) ([]*domain.Room, error) {
 
 	rows, err := r.pool.Query(ctx, query)
 	if err != nil {
+		log.Printf("postgres: get list room error : %v", err)
 		return nil, fmt.Errorf("postgres: get list room error: %w", err)
 	}
 	defer rows.Close()

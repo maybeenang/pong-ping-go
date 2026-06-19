@@ -4,6 +4,8 @@ package config
 import (
 	"log"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -12,6 +14,10 @@ type Config struct {
 }
 
 func Load() Config {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("config: ", err)
+	}
 	cfg := Config{
 		DatabaseURL: os.Getenv("DATABASE_URL"),
 		Port:        os.Getenv("PORT"),
@@ -22,7 +28,7 @@ func Load() Config {
 	}
 
 	if cfg.DatabaseURL == "" {
-		log.Fatal("DATABASE_URL not set")
+		log.Fatal("config : DATABASE_URL not set")
 	}
 
 	return cfg

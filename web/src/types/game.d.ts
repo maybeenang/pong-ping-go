@@ -20,6 +20,8 @@ export interface Room {
 
 export interface RoomResponse {
     room_id: string;
+    room_name: string;
+    room_status: string;
 }
 
 export interface ListRoomResponse {

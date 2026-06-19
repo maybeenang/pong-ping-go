@@ -11,8 +11,8 @@ const (
 )
 
 type Room struct {
-	ID        string
-	Name      string
-	Status    RoomStatus
-	CreatedAt time.Time
+	ID        string     `json:"id"`
+	Name      string     `json:"name"`
+	Status    RoomStatus `json:"status"`
+	CreatedAt time.Time  `json:"created_at"`
 }
